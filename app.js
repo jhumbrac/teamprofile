@@ -5,6 +5,9 @@ const Engineer = require('./lib/engineer');
 const Manager = require('./lib/manager');
 const Intern = require('./lib/intern');
 
+const employees = [];
+let id = 0;
+
 let generateQuestions = async function(employeeType) {
     await inquirer.prompt([
         {
@@ -53,22 +56,57 @@ let generateQuestions = async function(employeeType) {
         //console.log(res);
         switch(res.role){
             case 'manager':
-                console.log('manager');
+                let manager = new Manager(res.name, id, res.email, res.officeNumber);
+                employees.push(manager);
                 break;
             case 'engineer':
-                console.log('engineer');
+                let engineer = new Engineer(res.name, id, res.email, res.github);
+                employees.push(engineer);
                 break;
             case 'intern':
-                console.log('intern');
+                let intern = new Intern(res.name, id, res.email, res.school);
+                employees.push(intern);
                 break;
             default: console.log('No role');
         }
+        id++;
+        continueQuestions();
     })
 };
-
-
-inquirer
-    .prompt(
+function continueQuestions() {
+    inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'confirmation',
+            message: 'Would you like to enter another employee?',
+            filter: val => {
+                return val;
+            }
+        }
+    ]).then( val =>{
+        if (val.confirmation) {
+            employeeSetup();
+        } else {
+            console.log('finished with arrays');
+            console.log(employees);
+            generateHtml();
+        }
+    })
+}
+function generateHtml() {
+    employees.forEach(employee => {
+        const $employee = `
+<section class="employee">
+        <h3>${employee.name}</h3>
+        <p>${employee.id}</p>
+        <a href="mailto:${employee.email}">${employee.email}</a>
+</section>
+        `;
+        console.log($employee);
+    });
+}
+function employeeSetup() {
+    inquirer.prompt(
         {
             type: 'list',
             name: 'role',
@@ -81,26 +119,6 @@ inquirer
     ).then( res => {
         const role = res.role;
         generateQuestions(role);
-        // if ( res.role === 'manager') {
-        //     // generateQuestions(manager)
-        //     console.log('manager')
-        // } else if ( res.role === 'engineer') {
-        //     // generateQuestions(engineer);
-        //     console.log('engineer')
-        // } else {
-        //     //generateQuestions(intern);
-        //     console.log('intern')
-        // }
-        //questions:
-        // name
-        // email
-        // role
-        // id
-        // specific info based on role ???
-        
-        // Ask manager first
-        // new team member?
-
-        // validation to ensure proper format
     })
+} employeeSetup();
 
