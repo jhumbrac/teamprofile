@@ -87,22 +87,36 @@ function continueQuestions() {
         if (val.confirmation) {
             employeeSetup();
         } else {
-            console.log('finished with arrays');
-            console.log(employees);
             generateHtml();
         }
     })
 }
 function generateHtml() {
     employees.forEach(employee => {
+        let employeeSpecific = employee.getRole();
+        let empResult;
+        switch (employeeSpecific){
+            case 'Manager':
+                empResult = `Office #: ${employee.getOfficeNumber()}`;
+                break;
+            case 'Engineer':
+                empResult = `Github profile: ${employee.getGithub()}`
+                break;
+            case 'Intern':
+                empResult = `Attends: ${employee.getSchool()}`
+                break;
+            default: console.log('Not successful');
+        }
         const $employee = `
 <section class="employee">
-        <h3>${employee.name}</h3>
-        <p>${employee.id}</p>
-        <a href="mailto:${employee.email}">${employee.email}</a>
-</section>
-        `;
-        console.log($employee);
+    <h3>${employee.getName()}</h3>
+    <h4>${employee.getRole()}</h4>
+    <p>Employee ID: ${employee.getId()}</p>
+    <p>${empResult}</p>
+    <a href="mailto:${employee.getEmail()}">${employee.getEmail()}</a>
+</section>`;
+        
+    console.log($employee);
     });
 }
 function employeeSetup() {
