@@ -5,7 +5,10 @@ const Engineer = require('./lib/engineer');
 const Manager = require('./lib/manager');
 const Intern = require('./lib/intern');
 
+const beginningHtml =`<!doctype><html><head><title>Employee Team Generator</title><meta charset="utf-8"><link rel="stylesheet" href="style.css"></head><body><h1>Employee Team</h1>`;
+const endingHtml = `</body></html>`;
 const employees = [];
+const employeeHtml = [];
 let id = 0;
 
 let generateQuestions = async function(employeeType) {
@@ -107,17 +110,14 @@ function generateHtml() {
                 break;
             default: console.log('Not successful');
         }
-        const $employee = `
-<section class="employee">
-    <h3>${employee.getName()}</h3>
-    <h4>${employee.getRole()}</h4>
-    <p>Employee ID: ${employee.getId()}</p>
-    <p>${empResult}</p>
-    <a href="mailto:${employee.getEmail()}">${employee.getEmail()}</a>
-</section>`;
-        
-    console.log($employee);
+        const $employee = `<section class="employee"><h3>${employee.getName()}</h3><h4>${employee.getRole()}</h4><p>Employee ID: ${employee.getId()}</p><p>${empResult}</p><a href="mailto:${employee.getEmail()}">${employee.getEmail()}</a></section>`;
+        employeeHtml.push($employee);
     });
+    const htmlArray = [beginningHtml, ...employeeHtml, endingHtml];
+    fs.writeFile('output/index.html', htmlArray.join(' '), err=>{
+        if (err) throw err;
+    });
+    console.log(employeeHtml);
 }
 function employeeSetup() {
     inquirer.prompt(
